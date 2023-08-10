@@ -20,6 +20,7 @@ import {
   Image,
   BackHandler,
   Alert,
+  TextInput,
 } from 'react-native';
 import React, {Component} from 'react';
 
@@ -62,6 +63,8 @@ class MainPage extends Component {
       backgroundColor: 'white',
       noiseData: [],
       noisethreshold: thresholdValue,
+      audioDataHistory: [], // Initialize an empty array for storing audio data history
+      deviceName: '',
     };
 
     this.audioRecorderPlayer = new AudioRecorderPlayer();
@@ -78,6 +81,11 @@ class MainPage extends Component {
       {cancelable: false},
     );
     return true; // Prevent default behavior
+  };
+  handleInputChange = text => {
+    this.setState({
+      deviceName: text, // Update the state when the TextInput value changes
+    });
   };
 
   componentDidMount() {
@@ -96,6 +104,218 @@ class MainPage extends Component {
         noisethreshold: this.props.route.params?.noisethreshold || -6,
       });
     }
+  }
+  render() {
+    const {route, navigation} = this.props;
+    let textColor = 'grey'; // Default text color
+    let backgroundColor = 'white';
+
+    if (this.state.setNormal) {
+      textColor = 'green';
+    } else if (this.state.setLoud) {
+      textColor = 'red';
+      backgroundColor = 'red';
+    }
+
+    let playWidth =
+      (this.state.currentPositionSec / this.state.currentDurationSec) *
+      (screenWidth - 56);
+
+    if (!playWidth) {
+      playWidth = 0;
+    }
+
+    return (
+      <SafeAreaView
+        style={[
+          styles.container,
+          {backgroundColor: this.state.backgroundColor},
+        ]}>
+        <TouchableOpacity
+          style={{
+            justifyContent: 'flex-end',
+            width: '100%',
+            alignItems: 'flex-end',
+            marginTop: 20,
+            right: 10,
+          }}
+          onPress={() =>
+            navigation.navigate('Settings', {
+              audioDataHistory: this.state.audioDataHistory, // Pass the array of audio data history
+            })
+          }>
+          <Image
+            source={require('./assets/gear.png')}
+            style={{
+              height: 40,
+              width: 40,
+            }}
+          />
+        </TouchableOpacity>
+        <View style={styles.container2}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 20,
+              justifyContent: 'flex-start',
+              padding: 5,
+              width: '100%',
+              marginTop: 5,
+            }}>
+            <Text style={{color: 'black', fontSize: 20}}>Device Name</Text>
+            <TextInput
+              style={{
+                width: 150,
+                borderWidth: 2,
+                borderColor: 'grey',
+                marginHorizontal: 10,
+                borderRadius: 5,
+                textAlign: 'center',
+                textAlignVertical: 'center',
+              }}
+              placeholder="Servo motor"
+              value={this.state.deviceName} // Set the value of TextInput from state
+              onChangeText={this.handleInputChange}
+            />
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.txtDB}>{this.state.currentDB} </Text>
+            <Text style={styles.txtDB}>DB</Text>
+          </View>
+          <Text style={styles.txtofdbstatus}>
+            threshold : {this.state.noisethreshold} DB
+          </Text>
+          <Text style={styles.titleTxt}>Noise Detector</Text>
+          <Text style={styles.txtRecordCounter}>{this.state.recordTime}</Text>
+          <View style={styles.viewRecorder}>
+            <View style={styles.recordBtnWrapper}>
+              <Button
+                style={styles.btntesting}
+                onPress={this.onStartRecord}
+                textStyle={styles.txttesting}>
+                Start Testing
+              </Button>
+              <Button
+                style={[
+                  styles.btn,
+                  {
+                    marginLeft: 12,
+                  },
+                ]}
+                onPress={this.onPauseRecord}
+                textStyle={styles.txt}>
+                Pause
+              </Button>
+              <Button
+                style={[
+                  styles.btn,
+                  {
+                    marginLeft: 12,
+                  },
+                ]}
+                onPress={this.onResumeRecord}
+                textStyle={styles.txt}>
+                Resume
+              </Button>
+              <Button
+                style={[styles.btn, {marginLeft: 12}]}
+                onPress={this.onStopRecord}
+                textStyle={styles.txt}>
+                Stop
+              </Button>
+            </View>
+            <Text style={{color: 'black', marginTop: 30, fontSize: 20}}>
+              Noise Data
+            </Text>
+            {this.state.noiseData.length == 0 ? (
+              <Text style={{color: 'grey', fontSize: 20, padding: 10}}>
+                no noise data fetched
+              </Text>
+            ) : (
+              <FlatList
+                style={{height: 100}}
+                data={this.state.noiseData}
+                renderItem={({item}) => {
+                  return (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        width: '100%',
+                        margin: 5,
+                        padding: 5,
+                        justifyContent: 'flex-start',
+                        backgroundColor: 'blue',
+                      }}>
+                      <Text style={{color: 'white', fontSize: 15, padding: 5}}>
+                        noise fetched at :
+                      </Text>
+                      <Text style={{color: 'red', fontSize: 15, padding: 5}}>
+                        {item}
+                      </Text>
+                    </View>
+                  );
+                }}
+                keyExtractor={item => item.toString()}
+              />
+            )}
+          </View>
+          <View style={styles.viewPlayer}>
+            <TouchableOpacity
+              style={styles.viewBarWrapper}
+              onPress={this.onStatusPress}>
+              <View style={styles.viewBar}>
+                <View style={[styles.viewBarPlay, {width: playWidth}]} />
+              </View>
+            </TouchableOpacity>
+            <Text style={styles.txtCounter}>
+              {this.state.playTime} / {this.state.duration}
+            </Text>
+            <View style={styles.playBtnWrapper}>
+              <Button
+                style={styles.btnreplay}
+                onPress={this.onStartPlay}
+                textStyle={styles.txtreplay}>
+                RePlay Track
+              </Button>
+              <Button
+                style={[
+                  styles.btn,
+                  {
+                    marginLeft: 12,
+                  },
+                ]}
+                onPress={this.onPausePlay}
+                textStyle={styles.txt}>
+                Pause
+              </Button>
+              <Button
+                style={[
+                  styles.btn,
+                  {
+                    marginLeft: 12,
+                  },
+                ]}
+                onPress={this.onResumePlay}
+                textStyle={styles.txt}>
+                Resume
+              </Button>
+              <Button
+                style={[
+                  styles.btn,
+                  {
+                    marginLeft: 12,
+                  },
+                ]}
+                onPress={this.onStopPlay}
+                textStyle={styles.txt}>
+                Stop
+              </Button>
+            </View>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
   }
 
   onStatusPress = e => {
@@ -227,20 +447,19 @@ class MainPage extends Component {
     );
 
     // Construct the data object to be passed to Settings screen
-    const audioData = {
-      uri: this.path, // Modify this according to your needs
-      recordedDuration,
+    const newAudioData = {
+      DeviceName: this.state.deviceName,
+      recordedDuration: this.state.recordTime,
       noiseData: this.state.noiseData,
     };
-    this.setState({
+    this.setState(prevState => ({
+      audioDataHistory: [...prevState.audioDataHistory, newAudioData],
       recordSecs: 0,
+      playTime: '00:00:00',
+      duration: recordedDuration,
+      recordTime: '00:00:00',
+    }));
 
-      playTime: '00:00:00', // Reset playTime
-      duration: recordedDuration, // Reset duration
-      recordTime: '00:00:00', // Reset recordTime
-    });
-
-    this.props.navigation.navigate('Settings', {audioData});
     console.log(result);
   };
 
@@ -286,181 +505,6 @@ class MainPage extends Component {
     this.audioRecorderPlayer.removePlayBackListener();
     this.setState({playTime: '00:00:00', currentPositionSec: 0}); // Reset playTime)
   };
-
-  render() {
-    const {route, navigation} = this.props;
-    let textColor = 'grey'; // Default text color
-    let backgroundColor = 'white';
-
-    if (this.state.setNormal) {
-      textColor = 'green';
-    } else if (this.state.setLoud) {
-      textColor = 'red';
-      backgroundColor = 'red';
-    }
-
-    let playWidth =
-      (this.state.currentPositionSec / this.state.currentDurationSec) *
-      (screenWidth - 56);
-
-    if (!playWidth) {
-      playWidth = 0;
-    }
-
-    return (
-      <SafeAreaView
-        style={[
-          styles.container,
-          {backgroundColor: this.state.backgroundColor},
-        ]}>
-        <TouchableOpacity
-          style={{right: 10, position: 'absolute', top: 10}}
-          onPress={() => navigation.navigate('Settings')}>
-          <Image
-            source={require('./assets/gear.png')}
-            style={{
-              height: 40,
-              width: 40,
-            }}
-          />
-        </TouchableOpacity>
-        <View style={{flexDirection: 'row'}}>
-          <Text style={styles.txtDB}>{this.state.currentDB} </Text>
-          <Text style={styles.txtDB}>DB</Text>
-        </View>
-        <Text style={styles.txtofdbstatus}>
-          threshold : {this.state.noisethreshold} DB
-        </Text>
-        <Text style={styles.titleTxt}>Noise Tester</Text>
-        <Text style={styles.txtRecordCounter}>{this.state.recordTime}</Text>
-        <View style={styles.viewRecorder}>
-          <View style={styles.recordBtnWrapper}>
-            <Button
-              style={styles.btntesting}
-              onPress={this.onStartRecord}
-              textStyle={styles.txttesting}>
-              Start Testing
-            </Button>
-            <Button
-              style={[
-                styles.btn,
-                {
-                  marginLeft: 12,
-                },
-              ]}
-              onPress={this.onPauseRecord}
-              textStyle={styles.txt}>
-              Pause
-            </Button>
-            <Button
-              style={[
-                styles.btn,
-                {
-                  marginLeft: 12,
-                },
-              ]}
-              onPress={this.onResumeRecord}
-              textStyle={styles.txt}>
-              Resume
-            </Button>
-            <Button
-              style={[styles.btn, {marginLeft: 12}]}
-              onPress={this.onStopRecord}
-              textStyle={styles.txt}>
-              Stop
-            </Button>
-          </View>
-          <Text style={{color: 'black', marginTop: 30, fontSize: 20}}>
-            Noise Data
-          </Text>
-          {this.state.noiseData.length == 0 ? (
-            <Text style={{color: 'grey', fontSize: 20, padding: 10}}>
-              no noise data fetched
-            </Text>
-          ) : (
-            <FlatList
-              style={{height: 200}}
-              data={this.state.noiseData}
-              renderItem={({item}) => {
-                return (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      width: '100%',
-                      margin: 5,
-                      padding: 5,
-                      justifyContent: 'flex-start',
-                      backgroundColor: 'blue',
-                    }}>
-                    <Text style={{color: 'white', fontSize: 20, padding: 10}}>
-                      noise fetched at :
-                    </Text>
-                    <Text style={{color: 'red', fontSize: 20, padding: 10}}>
-                      {item}
-                    </Text>
-                  </View>
-                );
-              }}
-              keyExtractor={item => item.toString()}
-            />
-          )}
-        </View>
-        <View style={styles.viewPlayer}>
-          <TouchableOpacity
-            style={styles.viewBarWrapper}
-            onPress={this.onStatusPress}>
-            <View style={styles.viewBar}>
-              <View style={[styles.viewBarPlay, {width: playWidth}]} />
-            </View>
-          </TouchableOpacity>
-          <Text style={styles.txtCounter}>
-            {this.state.playTime} / {this.state.duration}
-          </Text>
-          <View style={styles.playBtnWrapper}>
-            <Button
-              style={styles.btnreplay}
-              onPress={this.onStartPlay}
-              textStyle={styles.txtreplay}>
-              RePlay Track
-            </Button>
-            <Button
-              style={[
-                styles.btn,
-                {
-                  marginLeft: 12,
-                },
-              ]}
-              onPress={this.onPausePlay}
-              textStyle={styles.txt}>
-              Pause
-            </Button>
-            <Button
-              style={[
-                styles.btn,
-                {
-                  marginLeft: 12,
-                },
-              ]}
-              onPress={this.onResumePlay}
-              textStyle={styles.txt}>
-              Resume
-            </Button>
-            <Button
-              style={[
-                styles.btn,
-                {
-                  marginLeft: 12,
-                },
-              ]}
-              onPress={this.onStopPlay}
-              textStyle={styles.txt}>
-              Stop
-            </Button>
-          </View>
-        </View>
-      </SafeAreaView>
-    );
-  }
 }
 
 export default MainPage;
@@ -469,6 +513,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+
+  container2: {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
