@@ -8,17 +8,17 @@ import {
 } from 'react-native';
 
 import {Component} from 'react';
-
+import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 // import NativeButton from 'apsl-react-native-button';
 
 const styles = StyleSheet.create({
   btn: {
     backgroundColor: 'transparent',
     alignSelf: 'center',
-    borderRadius: 4,
-    borderWidth: 2,
-    width: 320,
-    height: 52,
+    borderRadius: moderateScale(4),
+    borderWidth: moderateScale(10),
+    width: scale(320),
+    height: verticalScale(52),
     borderColor: 'white',
 
     alignItems: 'center',
@@ -29,22 +29,22 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 4,
     borderWidth: 2,
-    width: 320,
-    height: 52,
+    width: scale(320),
+    height: verticalScale(52),
     borderColor: '#333',
 
     alignItems: 'center',
     justifyContent: 'center',
   },
   txt: {
-    fontSize: 14,
+    fontSize: scale(14),
     color: 'white',
   },
   imgLeft: {
-    width: 24,
-    height: 24,
+    width: scale(24),
+    height: verticalScale(24),
     position: 'absolute',
-    left: 16,
+    left: moderateScale(16),
   },
 });
 

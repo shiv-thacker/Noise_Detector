@@ -26,6 +26,7 @@ import React, {Component} from 'react';
 
 import Button from '../components/uis/Button';
 import RNFetchBlob from 'rn-fetch-blob';
+import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -119,7 +120,7 @@ class MainPage extends Component {
 
     let playWidth =
       (this.state.currentPositionSec / this.state.currentDurationSec) *
-      (screenWidth - 56);
+      (screenWidth - moderateScale(56));
 
     if (!playWidth) {
       playWidth = 0;
@@ -136,8 +137,8 @@ class MainPage extends Component {
             justifyContent: 'flex-end',
             width: '100%',
             alignItems: 'flex-end',
-            marginTop: 20,
-            right: 10,
+            marginTop: verticalScale(10),
+            right: scale(10),
           }}
           onPress={() =>
             navigation.navigate('Settings', {
@@ -147,8 +148,8 @@ class MainPage extends Component {
           <Image
             source={require('./assets/gear.png')}
             style={{
-              height: 40,
-              width: 40,
+              height: verticalScale(40),
+              width: scale(40),
             }}
           />
         </TouchableOpacity>
@@ -157,22 +158,25 @@ class MainPage extends Component {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              marginBottom: 20,
+              marginBottom: verticalScale(20),
               justifyContent: 'flex-start',
-              padding: 5,
+              padding: moderateScale(5),
               width: '100%',
-              marginTop: 5,
+              marginTop: verticalScale(5),
             }}>
-            <Text style={{color: 'black', fontSize: 20}}>Device Name</Text>
+            <Text style={{color: 'black', fontSize: scale(17)}}>
+              Device Name:
+            </Text>
             <TextInput
               style={{
-                width: 150,
-                borderWidth: 2,
+                width: scale(150),
+                borderBottomWidth: scale(2),
                 borderColor: 'grey',
-                marginHorizontal: 10,
-                borderRadius: 5,
+                borderColor: 'black',
+                marginHorizontal: scale(10),
                 textAlign: 'center',
                 textAlignVertical: 'center',
+                fontSize: scale(15),
               }}
               placeholder="Servo motor"
               value={this.state.deviceName} // Set the value of TextInput from state
@@ -200,7 +204,7 @@ class MainPage extends Component {
                 style={[
                   styles.btn,
                   {
-                    marginLeft: 12,
+                    marginLeft: scale(12),
                   },
                 ]}
                 onPress={this.onPauseRecord}
@@ -211,7 +215,7 @@ class MainPage extends Component {
                 style={[
                   styles.btn,
                   {
-                    marginLeft: 12,
+                    marginLeft: scale(12),
                   },
                 ]}
                 onPress={this.onResumeRecord}
@@ -219,22 +223,32 @@ class MainPage extends Component {
                 Resume
               </Button>
               <Button
-                style={[styles.btn, {marginLeft: 12}]}
+                style={[styles.btn, {marginLeft: scale(12)}]}
                 onPress={this.onStopRecord}
                 textStyle={styles.txt}>
                 Stop
               </Button>
             </View>
-            <Text style={{color: 'black', marginTop: 30, fontSize: 20}}>
+            <Text
+              style={{
+                color: 'black',
+                marginTop: verticalScale(30),
+                fontSize: scale(20),
+              }}>
               Noise Data
             </Text>
             {this.state.noiseData.length == 0 ? (
-              <Text style={{color: 'grey', fontSize: 20, padding: 10}}>
+              <Text
+                style={{
+                  color: 'grey',
+                  fontSize: scale(20),
+                  padding: moderateScale(7),
+                }}>
                 no noise data fetched
               </Text>
             ) : (
               <FlatList
-                style={{height: 100}}
+                style={{height: verticalScale(100)}}
                 data={this.state.noiseData}
                 renderItem={({item}) => {
                   return (
@@ -242,15 +256,25 @@ class MainPage extends Component {
                       style={{
                         flexDirection: 'row',
                         width: '100%',
-                        margin: 5,
-                        padding: 5,
+                        margin: moderateScale(5),
+                        padding: moderateScale(5),
                         justifyContent: 'flex-start',
                         backgroundColor: 'blue',
                       }}>
-                      <Text style={{color: 'white', fontSize: 15, padding: 5}}>
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: scale(15),
+                          padding: moderateScale(5),
+                        }}>
                         noise fetched at :
                       </Text>
-                      <Text style={{color: 'red', fontSize: 15, padding: 5}}>
+                      <Text
+                        style={{
+                          color: 'red',
+                          fontSize: scale(15),
+                          padding: moderateScale(5),
+                        }}>
                         {item}
                       </Text>
                     </View>
@@ -282,7 +306,7 @@ class MainPage extends Component {
                 style={[
                   styles.btn,
                   {
-                    marginLeft: 12,
+                    marginLeft: scale(12),
                   },
                 ]}
                 onPress={this.onPausePlay}
@@ -293,7 +317,7 @@ class MainPage extends Component {
                 style={[
                   styles.btn,
                   {
-                    marginLeft: 12,
+                    marginLeft: scale(12),
                   },
                 ]}
                 onPress={this.onResumePlay}
@@ -304,7 +328,7 @@ class MainPage extends Component {
                 style={[
                   styles.btn,
                   {
-                    marginLeft: 12,
+                    marginLeft: scale(12),
                   },
                 ]}
                 onPress={this.onStopPlay}
@@ -521,17 +545,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   titleTxt: {
-    marginTop: 25,
+    marginTop: verticalScale(15),
     color: 'black',
-    fontSize: 28,
+    fontSize: scale(24),
   },
   txtDB: {
     color: 'black',
-    fontSize: 40,
+    fontSize: scale(35),
     fontWeight: '600',
   },
   viewRecorder: {
-    marginTop: 20,
+    marginTop: verticalScale(17),
     width: '100%',
     alignItems: 'center',
   },
@@ -541,89 +565,90 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   viewPlayer: {
-    marginTop: 20,
+    marginTop: verticalScale(17),
     alignSelf: 'stretch',
     alignItems: 'center',
   },
   viewBarWrapper: {
-    marginTop: 20,
-    marginHorizontal: 28,
+    marginTop: verticalScale(17),
+    marginHorizontal: scale(28),
     alignSelf: 'stretch',
   },
   viewBar: {
     backgroundColor: 'black',
-    height: 4,
+    height: verticalScale(4),
     alignSelf: 'stretch',
   },
   viewBarPlay: {
     backgroundColor: 'red',
-    height: 4,
-    width: 0,
+    height: verticalScale(4),
+    width: scale(0),
   },
   playStatusTxt: {
-    marginTop: 8,
+    marginTop: verticalScale(8),
     color: 'black',
   },
   playBtnWrapper: {
     flexDirection: 'row',
-    marginTop: 30,
+    marginTop: verticalScale(25),
   },
   btn: {
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: scale(1),
   },
   btntesting: {
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: scale(1),
     backgroundColor: 'green',
   },
   btnreplay: {
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: scale(1),
     backgroundColor: 'orange',
   },
   txt: {
     color: 'black',
-    fontSize: 14,
-    marginHorizontal: 8,
-    marginVertical: 4,
+    fontSize: scale(14),
+    marginHorizontal: scale(8),
+    marginVertical: verticalScale(4),
   },
   txttesting: {
     color: 'white',
-    fontSize: 14,
-    marginHorizontal: 8,
-    marginVertical: 4,
+    fontSize: scale(14),
+    marginHorizontal: scale(8),
+    marginVertical: verticalScale(4),
   },
   txtreplay: {
     color: 'white',
-    fontSize: 14,
-    marginHorizontal: 8,
-    marginVertical: 4,
+    fontSize: scale(14),
+    marginHorizontal: scale(8),
+    marginVertical: verticalScale(4),
   },
   txtRecordCounter: {
-    marginTop: 32,
+    marginTop: verticalScale(20),
     color: 'red',
-    fontSize: 20,
+    fontSize: scale(20),
     textAlignVertical: 'center',
     fontWeight: '200',
     fontFamily: 'Helvetica Neue',
-    letterSpacing: 3,
+    letterSpacing: scale(3),
   },
   txtofdbstatus: {
-    marginTop: 5,
-    fontSize: 20,
+    marginTop: verticalScale(1),
+    fontSize: scale(17),
     textAlignVertical: 'center',
     fontWeight: '200',
     fontFamily: 'Helvetica Neue',
-    letterSpacing: 3,
+    letterSpacing: scale(3),
+    color: 'grey',
   },
   txtCounter: {
-    marginTop: 12,
+    marginTop: verticalScale(12),
     color: 'red',
-    fontSize: 20,
+    fontSize: scale(20),
     textAlignVertical: 'center',
     fontWeight: '200',
     fontFamily: 'Helvetica Neue',
-    letterSpacing: 3,
+    letterSpacing: scale(3),
   },
 });

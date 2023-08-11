@@ -11,6 +11,7 @@ import {
   Share,
 } from 'react-native';
 import React, {useState} from 'react';
+import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
 
 const Settings = ({navigation, route}) => {
   const {audioDataHistory} = route.params;
@@ -42,7 +43,11 @@ const Settings = ({navigation, route}) => {
     <View style={styles.container}>
       <View style={{backgroundColor: '#DDDDDD'}}>
         <TouchableOpacity
-          style={{left: 10, position: 'absolute', top: 10}}
+          style={{
+            left: scale(10),
+            position: 'absolute',
+            top: verticalScale(10),
+          }}
           onPress={() => {
             if (noisethreshold < -1 && noisethreshold > -160) {
               navigation.navigate('MainPage', {noisethreshold: noisethreshold});
@@ -57,34 +62,40 @@ const Settings = ({navigation, route}) => {
           <Image
             source={require('./assets/previous.png')}
             style={{
-              height: 50,
-              width: 50,
+              height: scale(40),
+              width: verticalScale(40),
+              resizeMode: 'contain',
             }}
           />
         </TouchableOpacity>
 
         <Text
-          style={{color: 'black', fontSize: 25, margin: 17, marginLeft: 70}}>
+          style={{
+            color: 'black',
+            fontSize: scale(21),
+            margin: moderateScale(16),
+            marginLeft: scale(60),
+          }}>
           Settings
         </Text>
       </View>
       <View
         style={{
-          margin: 10,
+          margin: moderateScale(10),
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'flex-start',
         }}>
-        <Text style={{color: 'black', fontSize: 20}}>
+        <Text style={{color: 'black', fontSize: scale(17)}}>
           Set Your Noise Threshold:
         </Text>
         <TextInput
           style={{
-            width: 90,
-            borderWidth: 2,
+            width: scale(90),
+            borderWidth: scale(2),
             borderColor: 'grey',
-            marginHorizontal: 10,
-            borderRadius: 5,
+            marginHorizontal: verticalScale(10),
+            borderRadius: scale(5),
             textAlign: 'center',
             textAlignVertical: 'center',
           }}
@@ -96,11 +107,11 @@ const Settings = ({navigation, route}) => {
 
       <Text
         style={{
-          fontSize: 20,
+          fontSize: scale(20),
           color: 'black',
           fontWeight: '500',
-          marginTop: 20,
-          padding: 10,
+          marginTop: verticalScale(17),
+          padding: moderateScale(10),
         }}>
         History:-
       </Text>
@@ -110,14 +121,14 @@ const Settings = ({navigation, route}) => {
         renderItem={({item}) => (
           <View
             style={{
-              padding: 10,
+              padding: moderateScale(10),
               width: '100%',
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
             }}>
             <View>
-              <Text style={{color: 'black', fontSize: 17}}>
+              <Text style={{color: 'black', fontSize: scale(15)}}>
                 DeviceName: {item.DeviceName}
               </Text>
               <Text style={{color: 'black'}}>
@@ -136,9 +147,10 @@ const Settings = ({navigation, route}) => {
               <Image
                 source={require('./assets/share.png')}
                 style={{
-                  height: 40,
-                  width: 40,
-                  marginRight: 10,
+                  height: scale(34),
+                  width: verticalScale(34),
+                  marginRight: scale(10),
+                  resizeMode: 'contain',
                 }}
               />
             </TouchableOpacity>
