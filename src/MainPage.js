@@ -27,6 +27,7 @@ import React, {Component} from 'react';
 import Button from '../components/uis/Button';
 import RNFetchBlob from 'rn-fetch-blob';
 import {scale, verticalScale, moderateScale} from 'react-native-size-matters';
+import {request, PERMISSIONS, check, RESULTS} from 'react-native-permissions';
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -137,8 +138,8 @@ class MainPage extends Component {
             justifyContent: 'flex-end',
             width: '100%',
             alignItems: 'flex-end',
-            marginTop: verticalScale(10),
-            right: scale(10),
+            marginTop: verticalScale(12),
+            right: scale(12),
           }}
           onPress={() =>
             navigation.navigate('Settings', {
@@ -148,8 +149,8 @@ class MainPage extends Component {
           <Image
             source={require('./assets/gear.png')}
             style={{
-              height: verticalScale(40),
-              width: scale(40),
+              height: verticalScale(35),
+              width: scale(35),
             }}
           />
         </TouchableOpacity>
@@ -172,11 +173,11 @@ class MainPage extends Component {
                 width: scale(150),
                 borderBottomWidth: scale(2),
                 borderColor: 'grey',
-                borderColor: 'black',
                 marginHorizontal: scale(10),
                 textAlign: 'center',
                 textAlignVertical: 'center',
                 fontSize: scale(15),
+                color: 'black',
               }}
               placeholder="Servo motor"
               value={this.state.deviceName} // Set the value of TextInput from state
@@ -371,32 +372,31 @@ class MainPage extends Component {
   onStartRecord = async () => {
     if (Platform.OS === 'android') {
       try {
-        const grants = await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-        ]);
+        const storageWriteStatus = await request(
+          PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+        );
+        const storageReadStatus = await request(
+          PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+        );
+        const recordAudioStatus = await request(
+          PERMISSIONS.ANDROID.RECORD_AUDIO,
+        );
 
-        console.log('write external stroage', grants);
+        console.log('Storage Write Permission:', storageWriteStatus);
+        console.log('Storage Read Permission:', storageReadStatus);
+        console.log('Record Audio Permission:', recordAudioStatus);
 
         if (
-          grants['android.permission.WRITE_EXTERNAL_STORAGE'] ===
-            PermissionsAndroid.RESULTS.GRANTED &&
-          grants['android.permission.READ_EXTERNAL_STORAGE'] ===
-            PermissionsAndroid.RESULTS.GRANTED &&
-          grants['android.permission.RECORD_AUDIO'] ===
-            PermissionsAndroid.RESULTS.GRANTED
+          storageWriteStatus === RESULTS.GRANTED &&
+          storageReadStatus === RESULTS.GRANTED &&
+          recordAudioStatus === RESULTS.GRANTED
         ) {
-          console.log('permissions granted');
+          console.log('All required permissions granted');
         } else {
-          console.log('All required permissions not granted');
-
-          return;
+          console.log('Not all required permissions granted');
         }
-      } catch (err) {
-        console.warn(err);
-
-        return;
+      } catch (error) {
+        console.error('Error requesting permissions:', error);
       }
     }
 
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   viewBar: {
-    backgroundColor: 'black',
+    backgroundColor: 'grey',
     height: verticalScale(4),
     alignSelf: 'stretch',
   },
@@ -593,16 +593,16 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(25),
   },
   btn: {
-    borderColor: 'black',
+    borderColor: 'gray',
     borderWidth: scale(1),
   },
   btntesting: {
-    borderColor: 'black',
+    borderColor: 'grey',
     borderWidth: scale(1),
     backgroundColor: 'green',
   },
   btnreplay: {
-    borderColor: 'black',
+    borderColor: 'grey',
     borderWidth: scale(1),
     backgroundColor: 'orange',
   },

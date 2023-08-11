@@ -56,7 +56,7 @@ const Settings = ({navigation, route}) => {
               navigation.navigate('MainPage', {noisethreshold: noisethreshold});
               console.log('thresholdvalue', noisethreshold);
             } else {
-              Alert.alert('Please set noise threshold properly');
+              Alert.alert('Please set noise threshold between -1 to -160');
             }
           }}>
           <Image
@@ -98,6 +98,7 @@ const Settings = ({navigation, route}) => {
             borderRadius: scale(5),
             textAlign: 'center',
             textAlignVertical: 'center',
+            color: 'black',
           }}
           placeholder="-1 to -160"
           value={noisethreshold}
